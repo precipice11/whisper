@@ -1,5 +1,65 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+
+
+{% if user.is_authenticated %}
+    <div id="allPostsCont">
+        <h1>All Posts</h1>
+
+        <div id="newPostCont">
+
+            <h3>New Post</h3>
+            <form method="POST" action="{% url 'submitPost' %}">
+                {% csrf_token %}
+                <textarea name="postContent" rows="5" cols="50"></textarea>
+                <button>Post</button>
+            </form>
+
+        </div>
+
+        <div id="allPosts">
+            {% for post in page_obj %}
+
+            <div>
+                <a href="{% url 'profile' user_id=post.user.id %}">{{post.user}}</a>
+                <p>{{post.postContent}}</p>
+                <div>{{post.dateCreated}}</div>
+            </div>
+
+            {% endfor %}
+
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+            
+        </div>
+
+    </div>
+
+    <div id="followingCont">
+
+    </div>
+
+
+
+{% else %}
+    You are logged out.
+
+{% endif %}
+
 {% endblock %}
