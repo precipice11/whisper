@@ -1,16 +1,24 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    <h2>Posts from people you follow</h2>
+
+    <div id="allPostsCont">
+        <h2>Posts from people you follow</h2>
     {% for post in page_obj %}
-        <div style="margin-bottom: 1rem;">
-            <strong><a href="{% url 'profile' post.user.id %}">{{ post.user.username }}</a></strong>
+        <div class="post">
+            <strong style="margin-bottom: 10px;"><a style=" color: black;" href="{% url 'profile' post.user.id %}">{{ post.user.username }}</a></strong>
+
+
             <p>{{ post.postContent }}</p>
             <small>{{ post.dateCreated }}</small>
         </div>
     {% empty %}
         <p>You’re not following anyone, or no one has posted yet.</p>
     {% endfor %}
+
+
+
+
 
     <div class="pagination">
     <span class="step-links">
@@ -29,6 +37,8 @@
         {% endif %}
     </span>
 </div>
+    </div>
+    
 
 
 {% endblock %}

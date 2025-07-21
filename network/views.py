@@ -6,7 +6,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
 
 from .models import User, Post
 
@@ -77,6 +79,22 @@ def followingPage(request):
 
     return render(request, 'network/following.html', context)
 
+
+@login_required
+@csrf_exempt  # optional if you're using fetch with csrf token
+def edit_post(request, post_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        content = data.get("content", "").strip()
+
+        try:
+            post = Post.objects.get(pk=post_id, user=request.user)
+            post.postContent = content
+            post.save()
+            return JsonResponse({"success": True})
+        except Post.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Post not found or not yours"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
 
 
 

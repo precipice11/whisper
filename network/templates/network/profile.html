@@ -2,8 +2,8 @@
 
 {% block body %}
 
-
-    <h2>{{profile_user.username}}</h2>
+    <div id="allPostsCont">
+      <h2>{{profile_user.username}}</h2>
 
     {% if request.user != profile_user %}
         <form method="POST" action="{% url is_following|yesno:'unfollow,follow' profile_user.id %}">
@@ -23,12 +23,20 @@
 
     <h3>Posts</h3>
     {% for post in posts %}
-        <div style="margin-bottom: 1rem;">
+        <div class="post">
+            <strong style="margin-bottom: 10px;"><a style=" color: black;" href="{% url 'profile' post.user.id %}">{{ post.user.username }}</a></strong>
+
+
             <p>{{ post.postContent }}</p>
             <small>{{ post.dateCreated }}</small>
         </div>
     {% empty %}
-        <p>No posts yet.</p>
-    {% endfor %}
+        <p>No Posts.</p>
+    {% endfor %}  
+    </div>
+    
+
+
+
 
 {% endblock %}
