@@ -13,6 +13,8 @@ import json
 from .models import User, Post
 
 
+
+# Returns the home page with all posts.
 def index(request):
     allPosts = Post.objects.all().order_by('-dateCreated')
     paginator = Paginator(allPosts, 10)
@@ -24,18 +26,24 @@ def index(request):
     return render(request, 'network/index.html', context)
 
 
+
+# Creates a user Post in Database
 @login_required
 def submitPost(request):
     if request.method == 'POST':
         content = request.POST.get('postContent')
-        # do something with content
         user = request.user
+
+        # create a new post object
         Post.objects.create(user=user, postContent=content)
 
         return HttpResponseRedirect(reverse("index"))
 
-
     return HttpResponse("Only POST requests are accepted.")
+
+
+
+
 
 @login_required
 def profileView(request, user_id):
@@ -43,12 +51,19 @@ def profileView(request, user_id):
     posts = Post.objects.filter(user=profile_user).order_by('-dateCreated')
     is_following = request.user in profile_user.followers.all()
 
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     return render(request, 'network/profile.html', {
         "profile_user": profile_user,
-        "posts": posts,
+        'page_obj': page_obj,
         "is_following": is_following
     })
+
+
+
+
 
 @login_required
 def follow_user(request, user_id):
@@ -96,6 +111,28 @@ def edit_post(request, post_id):
             return JsonResponse({"success": False, "error": "Post not found or not yours"})
     return JsonResponse({"success": False, "error": "Invalid request"})
 
+
+@login_required
+def like_toggle(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = data.get('post_id')
+
+        post = get_object_or_404(Post, id=post_id)
+
+        liked = False
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+            liked = True
+
+        return JsonResponse({
+            "liked": liked,
+            "total_likes": post.likes.count()
+        })
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 

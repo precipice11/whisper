@@ -1,4 +1,5 @@
 
+let likeUrl = window.likeUrl;  // grab the global variable set in template
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -48,6 +49,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     });
+
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const postId = button.dataset.postId;
+
+            fetch(likeUrl, {
+                method: 'POST',
+                headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken")
+                },
+                body: JSON.stringify({ post_id: postId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.liked) {
+                    button.textContent = '❤️'; // If liked
+                } else {
+                    button.textContent = '🤍'; // If unliked
+                }
+
+                const likeCountSpan = button.nextElementSibling;
+                likeCountSpan.textContent = data.total_likes;
+            })
+            .catch(error => console.log("Error:", error))
+        })
+    })
 
 
     function getCookie(name) {

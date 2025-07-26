@@ -18,3 +18,25 @@
 .editPost {
     max-width: 50px;
 }
+
+.like-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 5px;
+}
+
+.post-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Push to right side */
+    margin-top: 10px;
+}
+
+
+.name {
+    color: black;
+    margin-bottom: 2rem;
+}

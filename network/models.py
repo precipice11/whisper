@@ -18,7 +18,11 @@ class Post(models.Model):
     postContent = models.CharField(max_length=500)
     dateCreated = models.DateTimeField(auto_now_add=True)
     # comments -> user's
-    # likes -> user's
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+
+    @property
+    def total_likes(self):
+        return self.likes.count()
 
 
 # Add additional models to represent posts, likes, followers.

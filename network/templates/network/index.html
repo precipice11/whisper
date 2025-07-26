@@ -4,34 +4,50 @@
 
 
 {% if user.is_authenticated %}
+
+
+
     <div id="allPostsCont">
 
 
+        <!-- Submit a New Post  -->
         <div id="newPostCont">
-
             <form method="POST" action="{% url 'submitPost' %}">
                 {% csrf_token %}
                 <textarea name="postContent" rows="5" cols="50" placeholder="What's happening {{request.user}}?"></textarea>
                 <button id="postBtn">Post</button>
             </form>
-
         </div>
 
         <div id="allPosts">
 
 
-        {% for post in page_obj %}
-        <div class="post" id="post-{{ post.id }}">
-            <strong style="margin-bottom: 10px;"><a style=" color: black;" href="{% url 'profile' user_id=post.user.id %}">{{ post.user }}</a></strong>
+            
+            {% for post in page_obj %}
+            <div class="post" id="post-{{ post.id }}">
+                <strong><a class="name" href="{% url 'profile' user_id=post.user.id %}">{{ post.user }}</a></strong>
 
-            {% if post.user == request.user %}
-            <button class="editPost" data-post-id="{{ post.id }}">Edit</button>
-            {% endif %}
+                {% if post.user == request.user %}
+                <button class="editPost" data-post-id="{{ post.id }}">Edit</button>
+                {% endif %}
 
-            <div class="postContent" data-post-id="{{ post.id }}">{{ post.postContent }}</div>
-            <small>{{ post.dateCreated }}</small>
-        </div>
-        {% endfor %}
+                <div class="postContent" data-post-id="{{ post.id }}">{{ post.postContent }}</div>
+                <small>{{ post.dateCreated }}</small>
+
+
+                <div class="post-footer">
+                    <button class="like-btn" data-post-id="{{ post.id }}">
+                        {% if user in post.likes.all %}
+                            ❤️
+                        {% else %}
+                            🤍
+                        {% endif %}
+                    </button>
+                    <div class="like-count">{{ post.total_likes }}</div>
+                </div>
+
+            </div>
+            {% endfor %}
 
 
             <div class="pagination">
@@ -52,14 +68,12 @@
                 </span>
             </div>
 
+
+
+
         </div>
 
     </div>
-
-    <div id="followingCont">
-
-    </div>
-
 
 
 {% else %}
